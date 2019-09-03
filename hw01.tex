@@ -1,10 +1,154 @@
 \documentclass[11pt,letterpaper]{article}
 \usepackage{preamble}
 
+
 \title{Homework Assignment 01 \\
-    \small Due: September 9, 2012}
+    \small Due: September 9, 2019}
 
 \begin{document}
 \maketitle
+
+\section{The set of all strings containing the substring `11'}
+\label{sec:s1}
+(See \hyperref[fig:fsm1]{Figure 1})
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}
+% States %
+\node[state, initial] at (-2,0) (S) {S};
+\node[state] at (0,0) (1) {1};
+\node[state, accepting] at (2,0) (11) {11};
+% Edges %
+\draw [->]
+    (S) edge[above] node{1} (1)
+    (S) edge[loop above] node{0} (S)
+    (1) edge[above] node{1} (11)
+    (1) edge[loop above] node{0} (1)
+    (11) edge[loop right] node{0,1} (11);
+\end{tikzpicture}
+\caption{Finite Automata Representation for \hyperref[sec:s1]{Section 1}}
+\label{fig:fsm1}
+\end{figure}
+
+\section{The set of all strings that start and end in the same symbol}
+\label{sec:s2}
+(See \hyperref[fig:fsm2]{Figure 2})
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}
+% States %
+\node[state, initial, accepting] at (0,0) (S) {S};
+\node[state] at (0,2) (0) {0};
+\node[state] at (0,-2) (1) {1};
+\node[state] at (-2,3) (00) {00};
+\node[state] at (2,3) (01) {01};
+\node[state] at (-2,-3) (10) {10};
+\node[state] at (2,-3) (11) {11};
+% Edges %
+\draw [->]
+    (11) edge[loop below] node{1} (11)
+    (10) edge[loop below] node{0} (10)
+    (01) edge[loop above] node{1} (01)
+    (00) edge[loop above] node{0} (00)
+    (S) edge[left] node{0} (0)
+    (S) edge[right] node{1} (1)
+    (0) edge[above] node{0} (00)
+    (0) edge[below] node{1} (01)
+    (1) edge[left] node{0} (10)
+    (1) edge[right] node{1} (11)
+    (0) edge[bend left, right] node{$\epsilon$} (S)
+    (1) edge[bend left, left] node{$\epsilon$} (S)
+    (00) edge[bend right, left] node{$\epsilon$} (S)
+    (11) edge[bend right, right] node{$\epsilon$} (S);
+\end{tikzpicture}
+\caption{Finite Automata Representation for \hyperref[sec:s2]{Section 2}}
+\label{fig:fsm2}
+\end{figure}
+
+\section{The set of all strings that do not start and end in the same symbol}
+\label{sec:s3}
+(See \hyperref[fig:fsm3]{Figure 3})
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}
+\node[state, initial] at (-2,0) (S) {S};
+\node[state] at (-1,2) (0) {0};
+\node[state] at (-1,-2) (1) {1};
+\node[state] at (1,2) (01) {01};
+\node[state] at (1,-2) (10) {10};
+\node[state, accepting] at (2,0) (F) {final};
+\draw [->]
+    (S) edge[left] node{0} (0)
+    (S) edge[left] node{1} (1)
+    (0) edge[loop above] node{0} (0)
+    (0) edge[above] node{1} (01)
+    (1) edge[loop below] node{1} (0)
+    (1) edge[above] node{0} (10)
+    (01) edge[loop above] node{1} (01)
+    (01) edge[bend left, below] node{0} (0)
+    (01) edge[right] node{$\epsilon$} (F)
+    (10) edge[loop below] node{0} (10)
+    (10) edge[bend left, below] node{1} (1)
+    (10) edge[right] node{$\epsilon$} (F);
+\end{tikzpicture}
+\caption{Finite Automata Representation for \hyperref[sec:s3]{Section 3}}
+\label{fig:fsm3}
+\end{figure}
+
+\section{The set of all strings containing both of the substrings `01' and `10'}
+\label{sec:s4}
+(See \hyperref[fig:fsm4]{Figure 4})
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}
+% States %
+\node[state, initial] at (-3,0) (S) {S};
+\node[state] at (-1,1) (0) {0};
+\node[state] at (-1,-1) (1) {1};
+\node[state] at (1,1) (01) {01};
+\node[state] at (1,-1) (10) {10};
+\node[state, accepting] at (3,1) (010) {010};
+\node[state, accepting] at (3,-1) (101) {101};
+% Edges %
+\draw [->]
+    (S) edge[left] node{0} (0)
+    (0) edge[above] node{1} (01)
+    (01) edge[above] node{0} (010)
+    (S) edge[left] node{1} (1)
+    (1) edge[below] node{0} (10)
+    (10) edge[below] node{1} (101)
+    (0) edge[loop above] node{0} (0)
+    (01) edge[loop above] node{1} (01)
+    (010) edge[loop right] node{0,1} (010)
+    (1) edge[loop below] node{1} (1)
+    (10) edge[loop below] node{0} (10)
+    (101) edge[loop right] node{0,1} (101);
+\end{tikzpicture}
+\caption{Finite Automata Representation for \hyperref[sec:s4]{Section 4}}
+\label{fig:fsm4}
+\end{figure}
+
+\section{The set of all strings with an even number of 0's and an odd number of 1's}
+\label{sec:s5}
+(See \hyperref[fig:fsm5]{Figure 5} for a drawing representation)
+\par
+\textbf{Induction Hypothesis}:
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}
+\node[state, initial] at (-1,1) (A) {A};
+\node[state] at (1,1) (B) {B};
+\node[state, accepting] at (-1,-1) (C) {C};
+\node[state] at (1,-1) (D) {D};
+\draw [-]
+    (A) edge[above] node{0} (B)
+    (A) edge[left] node{1} (C)
+    (B) edge[right] node{1} (D)
+    (C) edge[below] node{0} (D);
+\end{tikzpicture}
+\caption{Given Finite Automata in \hyperref[sec:s5]{Section 5}}
+\label{fig:fsm5}
+\end{figure}
 
 \end{document}
