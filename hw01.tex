@@ -10,7 +10,7 @@
 
 \section{The set of all strings containing the substring `11'}
 \label{sec:s1}
-(See \hyperref[fig:fsm1]{Figure 1})
+We simply count the number of $1's$ we have seen thus far, sending the counter to $S$ if we encounter a $0$. Once the input reaches accepting state, it doesn't matter what comes next as the substring $11$ is already in the string. (See \hyperref[fig:fsm1]{Figure 1})
 \begin{figure}[ht]
 \centering
 \begin{tikzpicture}
@@ -20,10 +20,10 @@
 \node[state, accepting] at (2,0) (11) {11};
 % Edges %
 \draw [->]
-    (S) edge[above] node{1} (1)
+    (S) edge[bend right, below] node{1} (1)
     (S) edge[loop above] node{0} (S)
     (1) edge[above] node{1} (11)
-    (1) edge[loop above] node{0} (1)
+    (1) edge[bend right, above] node{0} (S)
     (11) edge[loop right] node{0,1} (11);
 \end{tikzpicture}
 \caption{Finite Automata Representation for \hyperref[sec:s1]{Section 1}}
@@ -32,34 +32,30 @@
 
 \section{The set of all strings that start and end in the same symbol}
 \label{sec:s2}
-(See \hyperref[fig:fsm2]{Figure 2})
+The start state is also the accepting state. We go separate paths if we see a $0$ or a $1$ and then we go further from the accepting state if we see the opposite symbol. If we see the same symbol, we go back to the first state away from start. Note that $0$ and $1$ are accepted strings as they start and end with the same symbol, so long as there is nothing after them (denoted by $\epsilon$). (See \hyperref[fig:fsm2]{Figure 2})
 \begin{figure}[ht]
 \centering
 \begin{tikzpicture}
 % States %
 \node[state, initial, accepting] at (0,0) (S) {S};
-\node[state] at (0,2) (0) {0};
-\node[state] at (0,-2) (1) {1};
-\node[state] at (-2,3) (00) {00};
-\node[state] at (2,3) (01) {01};
-\node[state] at (-2,-3) (10) {10};
-\node[state] at (2,-3) (11) {11};
+\node[state] at (-2,2) (0) {0};
+\node[state] at (2,-2) (1) {1};
+\node[state] at (-4,2) (01) {01};
+\node[state] at (4,-2) (10) {10};
 % Edges %
 \draw [->]
-    (11) edge[loop below] node{1} (11)
-    (10) edge[loop below] node{0} (10)
-    (01) edge[loop above] node{1} (01)
-    (00) edge[loop above] node{0} (00)
-    (S) edge[left] node{0} (0)
-    (S) edge[right] node{1} (1)
-    (0) edge[above] node{0} (00)
+    (S) edge[above] node{0} (0)
+    (S) edge[above] node{1} (1)
     (0) edge[below] node{1} (01)
-    (1) edge[left] node{0} (10)
-    (1) edge[right] node{1} (11)
-    (0) edge[bend left, right] node{$\epsilon$} (S)
+    (1) edge[above] node{0} (10)
+    (0) edge[loop above] node{0} (0)
+    (1) edge[loop below] node{1} (1)
+    (0) edge[bend right, left] node{$\epsilon$} (S)
     (1) edge[bend left, left] node{$\epsilon$} (S)
-    (00) edge[bend right, left] node{$\epsilon$} (S)
-    (11) edge[bend right, right] node{$\epsilon$} (S);
+    (01) edge[loop above] node{1} (01)
+    (10) edge[loop below] node{0} (10)
+    (01) edge[bend left, above] node{0} (0)
+    (10) edge[bend left, below] node{1} (1);
 \end{tikzpicture}
 \caption{Finite Automata Representation for \hyperref[sec:s2]{Section 2}}
 \label{fig:fsm2}
@@ -67,7 +63,7 @@
 
 \section{The set of all strings that do not start and end in the same symbol}
 \label{sec:s3}
-(See \hyperref[fig:fsm3]{Figure 3})
+The complement of 2, we reverse the directions of the empty character such that an empty character encounter would change the state to the final state. Note that as $\epsilon$ is included in \hyperref[sec:s2]{Section 2}, it is not an acceptable string here, needing the creation of a separate final state. (See \hyperref[fig:fsm3]{Figure 3})
 \begin{figure}[ht]
 \centering
 \begin{tikzpicture}
@@ -76,7 +72,7 @@
 \node[state] at (-1,-2) (1) {1};
 \node[state] at (1,2) (01) {01};
 \node[state] at (1,-2) (10) {10};
-\node[state, accepting] at (2,0) (F) {final};
+\node[state, accepting] at (2,0) (F) {A};
 \draw [->]
     (S) edge[left] node{0} (0)
     (S) edge[left] node{1} (1)
@@ -97,58 +93,94 @@
 
 \section{The set of all strings containing both of the substrings `01' and `10'}
 \label{sec:s4}
-(See \hyperref[fig:fsm4]{Figure 4})
-\begin{figure}[ht]
+Requiring both substrings does not permit a character to be a part of two substrings. Specifically, the set of following strings is unacceptable: \\
+$N = \{010, 101, 0101, 1010\}$. Therefore we need to count until we see $1001$ or $0110$. After that it doesn't matter what is seen. If one of the two substrings is seen, we need to record that information and continue the search for the other substring. (See \hyperref[fig:fsm4]{Figure 4})
+\begin{figure}[!ht]
+\centering
+\begin{tikzpicture}
+% States %
+\node[state, initial] at (-4,0) (S) {S};
+\node[state] at (-2,2) (0) {0};
+\node[state] at (0,2) (01) {01};
+\node[state] at (2,2) (011) {011};
+\node[state] at (-2,-2) (1) {1};
+\node[state] at (0,-2) (10) {10};
+\node[state] at (2,-2) (100) {100};
+\node[state, accepting] at (4,0) (F) {A};
+
+% Edges %
+\draw [->]
+    (S) edge[left] node{0} (0)
+    (0) edge[below] node{1} (01)
+    (0) edge[loop above] node{0} (0)
+    (01) edge[below] node{1} (011)
+    (01) edge[bend right, above] node{0} (0)
+    (011) edge[right] node{0} (F);
+\draw [->]
+    (S) edge[left] node{1} (1)
+    (1) edge[above] node{0} (10)
+    (1) edge[loop below] node{1} (1)
+    (10) edge[bend left, below] node{1} (1)
+    (10) edge[above] node{0} (100)
+    (100) edge[right] node{1} (F);
+\draw (F) edge[loop right] node{0,1} (F);
+\end{tikzpicture}
+\caption{$N$ not in language}
+\label{fig:fsm4}
+\end{figure}
+
+However, if the substrings in set $N$ are accepted (owing to the fact that a single character can be a part of two substrings), the \textit{fa} requires fewer states as the states $011$ and $100$ are no longer needed. In a way, the $fa$ is \textit{collapsed}.
+In the above case, we had to explicitly check for multiple $1's$or multiple $0's$ to ensure the same character was not being included in two substrings. (See \hyperref[fig:fsm5]{Figure 5})
+\begin{figure}[!htb]
 \centering
 \begin{tikzpicture}
 % States %
 \node[state, initial] at (-3,0) (S) {S};
-\node[state] at (-1,1) (0) {0};
-\node[state] at (-1,-1) (1) {1};
-\node[state] at (1,1) (01) {01};
-\node[state] at (1,-1) (10) {10};
-\node[state, accepting] at (3,1) (010) {010};
-\node[state, accepting] at (3,-1) (101) {101};
+\node[state] at (-1,2) (0) {0};
+\node[state] at (-1,-2) (1) {1};
+\node[state] at (1,2) (01) {01};
+\node[state] at (1,-2) (10) {10};
+\node[state, accepting] at (3,0) (F) {A};
 % Edges %
 \draw [->]
     (S) edge[left] node{0} (0)
+    (0) edge[loop above] node{0} (0)
     (0) edge[above] node{1} (01)
-    (01) edge[above] node{0} (010)
+    (01) edge[above] node{0} (F)
+    (01) edge[loop above] node{1} (01);
+\draw [->]
     (S) edge[left] node{1} (1)
     (1) edge[below] node{0} (10)
-    (10) edge[below] node{1} (101)
-    (0) edge[loop above] node{0} (0)
-    (01) edge[loop above] node{1} (01)
-    (010) edge[loop right] node{0,1} (010)
     (1) edge[loop below] node{1} (1)
     (10) edge[loop below] node{0} (10)
-    (101) edge[loop right] node{0,1} (101);
+    (10) edge[below] node{1} (F);
+\draw (F) edge[loop right] node{0,1} (F);
 \end{tikzpicture}
-\caption{Finite Automata Representation for \hyperref[sec:s4]{Section 4}}
-\label{fig:fsm4}
+\caption{$N$ accepted in language}
+\label{fig:fsm5}
 \end{figure}
 
-\section{The set of all strings with an even number of 0's and an odd number of 1's}
+\section{Induction Hypothesis}
 \label{sec:s5}
-(See \hyperref[fig:fsm5]{Figure 5} for a drawing representation)
-\par
-\textbf{Induction Hypothesis}:
-
-\begin{figure}[ht]
+To prove that the given automation accepts The set of all strings with an even number of $0's$ and an odd number of $1's$. The drawing representation of the automation is given in \hyperref[fig:fsm6]{Figure 6}.
+\begin{figure}[!ht]
 \centering
 \begin{tikzpicture}
 \node[state, initial] at (-1,1) (A) {A};
 \node[state] at (1,1) (B) {B};
 \node[state, accepting] at (-1,-1) (C) {C};
 \node[state] at (1,-1) (D) {D};
-\draw [-]
+\draw [<->]
     (A) edge[above] node{0} (B)
     (A) edge[left] node{1} (C)
     (B) edge[right] node{1} (D)
     (C) edge[below] node{0} (D);
 \end{tikzpicture}
 \caption{Given Finite Automata in \hyperref[sec:s5]{Section 5}}
-\label{fig:fsm5}
+\label{fig:fsm6}
 \end{figure}
+
+Intuitively, it can be seen that the automation only accepts even number of $0's$ when the previous state is $A$ or $D$. $A$ stores the information that there are an even number of $0's$ and $D$ stores an odd number. Hence, a $1$ from $A$ and a $0$ from $D$ bring the machine into accepting state. \\
+This can also be proved inductively using the hypothesis, \textit{\textbf{Assume that the given machine accepts strings of length $n$ which have an even number of $0's$ and odd number of $1's$, for any $n \in N$}}. It can be proved by taking cases of the next character(s) and observing that state $C$ is reached only when the condition of even $0's$ and odd $1's$ is met.
 
 \end{document}
