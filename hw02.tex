@@ -2,9 +2,132 @@
 \usepackage{preamble}
 
 \title{Homework Assignment 02 \\
-    \small Due: }
+    \small Due: September 13, 2019}
 
 \begin{document}
 \maketitle
+
+\section{Cardinality}
+\subsection{Finite Cardinality}
+Collection of all finite cardinality sets of finite length strings of $0's$ and $1's$.
+
+\subsection{Infinite Cardinality}
+The collection of all sets of finite
+length strings of $0's$ and $1's$.
+
+
+\section{Finite Automata}
+\label{sec:s2}
+$L(M)$ is the set of strings that start and end with the same character.
+\subsection{Nondeterministic}
+\begin{figure}[!ht]
+\centering
+\begin{tikzpicture}
+% States %
+\node[state, initial, accepting] at (0,0) (S) {A};
+\node[state] at (-1,3) (B) {B};
+\node[state] at (1,3) (C) {C};
+\node[state] at (-1,-3) (D) {D};
+\node[state] at (1,-3) (E) {E};
+% Edges %
+\draw [->]
+    (S) edge[bend left, left] node{0} (B)
+    (S) edge[bend right, left] node{1} (D)
+    (B) edge[below] node{1} (C)
+    (C) edge[bend left, right] node{0} (S)
+    (D) edge[below] node{0} (E)
+    (E) edge[bend right, right] node{1} (S)
+    (S) edge[loop right] node{0,1} (S);
+\end{tikzpicture}
+\caption{NFA for \hyperref[sec:s2]{Section 2}}
+\label{fig:nfa}
+\end{figure}
+The following \hyperref[tab:nfa]{state table} can be constructed from the above \hyperref[fig:nfa]{drawing representation}. The equivalent states are marked with $*$
+\begin{table}[!ht]
+\centering
+\begin{tabular}{c| c c}
+     & $0$ & $1$  \\
+    \hline
+    $A*$ & $[AB]$ & $[AD]$ \\
+    $[AB]$ & $[AB]$ & $[CD]$ \\
+    $[AD]$ & $[BE]$ & $[AD]$ \\
+    $[CD]$ & $[AE]$ & $\emptyset$ \\
+    $[BE]$ & $\emptyset$ & $[AC]$ \\
+    $[AE]*$ & $[AB]$ & $[AD]$ \\
+    $\emptyset$ & $\emptyset$ & $\emptyset$ \\
+    $[AC]*$ & $[AB]$ & $[AD]$
+\end{tabular}
+\caption{State Table for \hyperref[fig:nfa]{NFA}}
+\label{tab:nfa}
+\end{table}
+\subsection{Deterministic}
+By the \hyperref[tab:nfa]{state table}, we can see that we need only 5 states to construct the deterministic automation. The 5 states are $A,[AB],[AD],[CD],[BE]$ where $A$ is the start state. Noting the presence of $A$ in other \textit{composite} states, $[AB]$ and $[AD]$ need to be made accepting states as well. Moreover, as $[BE]$ and $[CD]$ go to $\emptyset$, we shall respect that in our convergence of states. Hence, the DFA can be represented by the following \hyperref[tab:dfa]{state table} and \hyperref[fig:dfa]{drawing}.
+\\
+\begin{table}[!ht]
+\centering
+\begin{tabular}{c| c c}
+     & $0$ & $1$  \\
+    \hline
+    $A$* & $[AB]$ & $[AD]$ \\
+    $[AB]$ & $[AB]$ & $[CD]$ \\
+    $[AD]$ & $[BE]$ & $[AD]$ \\
+    $[CD]$ & $[AB]$ & $\emptyset$ \\
+    $[BE]$ & $\emptyset$ & $[AD]$
+\end{tabular}
+\caption{State Table for \hyperref[fig:dfa]{DFA}}
+\label{tab:dfa}
+\end{table}
+\begin{figure}[!ht]
+\centering
+\begin{tikzpicture}
+% States %
+\node[state, initial, accepting] at (0,0) (S) {A};
+\node[state, accepting] at (-1,2) (AB) {AB};
+\node[state, accepting] at (1,-2) (AD) {AD};
+\node[state] at (1,2) (CD) {CD};
+\node[state] at (-1,-2) (BE) {BE};
+% Edges %
+\draw [->]
+    (S) edge[left] node{0} (AB)
+    (AB) edge[bend right, below] node{1} (CD)
+    (CD) edge[bend right, above] node{0} (AB)
+    (AB) edge[loop left] node{0} (AB);
+\draw [->]
+    (S) edge[right] node{1} (AD)
+    (AD) edge[bend right, above] node{0} (BE)
+    (BE) edge[bend right, below] node{1} (AD)
+    (AD) edge[loop right] node{1} (AD);
+\end{tikzpicture}
+\caption{DFA given by \hyperref[tab:dfa]{DFA State Table}}
+\label{fig:dfa}
+\end{figure}
+
+\section{Set of strings}
+\begin{center} $\{10^n10^n | n \geq 1\}*$ \end{center}
+The given expression yields strings that start with $1$ and end with $0$. The initial $1$ is followed by $n$ $0's$ where $n \in N$. Those $0's$ are then followed by a $1$ which is then followed by another $n$ $0's$. The $*$ at the end of the set implies that the string maybe empty or have multiple variations of $n$ concatenated together.
+The set of strings less than or equal to length of 10 is $\{\epsilon, 1010, 100100, 10^310^3, 10^410^4, 101010^210^2\}$. Hence, six strings are in the set with length $\leq 10$. Note that the empty string is in the set and so is a combination of the second and third string in the set. Both are possible due to the presence of the $*$ in the expression.
+
+\section{Interweaving}
+\begin{center}
+    $S = \{10^{n}10^{n+1}|n \geq 1\}$
+    \\
+    $10S^{*} \cap S^{*}10^{*} =$ ??
+\end{center}
+Therefore, $S^{*} = \{\epsilon, 10^{1}10^{2}, 10^{2}10^{3}, 10^{3}10^{4}, 10^{4}10^{5}, 10^{5}10^{6}, ..\}$ and any number of concatenations of the elements.
+The string must start with a $10$ due to the left part. The right part forces us to complete $S$ adding $100$ to the end. The left part then forces us to add $10^{3}$. At this point, the expression is satisfied as $10^110^210^3$ satisfies $10S^*$ ($10$-$10^210^3$) as well as $S^*10^*$ ($10^110^2$-$10^3$). No other string fits the expression definition as it would violate the left side. Hence,
+\begin{center}
+    $10S^{*} \cap S^{*}10^{*} = \overline{10}\widehat{10^210^3}$
+\end{center}
+
+\section{Expression Formation}
+Given $S_1 = \{ 10^{n}10^{n+1} | n \geq 1 \}$ and $S_2 = \{ 10^{n}10^{2n} | n \geq 1 \}$ and the following union:
+\begin{center}
+    $S = \{1010^{2}10^{3}10^{6}10^{7}10^{14}\cdots10^{2^{n+1}-1} | n \geq 1 \}$ \\
+    $\cup$ \\
+    $\{1010^{2}10^{3}10^{6}10^{7}10^{14}\cdots10^{2^{n+2}-2} | n \geq 1 \}$
+\end{center}
+Hence, when $n=1$, $S = \{1010^{2}10^{3}, 1010^{2}10^{3}10^{6}\}$. When $n=2$, $S = \{1010^{2}10^{3}10^{6}10^{7}, 1010^{2}10^{3}10^{6}10^{7}10^{14}\}$. \\
+As the length of the strings is increasing, $S$ can simply be written as $(S_2S_1)^*$. The $S_2$ takes care of the doubling (which occurs first, whenever there is an odd block of $0's$) and the $S_1$ takes care of the increment (which occurs second, whenever there is an even block of $0's$). The $^*$ assures that the sequence can be repeated multiple times. Note that since a part of the previous $S_1$ will be a part of the consecutive $S_2$, $n$ must strictly be increasing and the following pattern for the blocks of $0's$ will appear - double, increment, double, increment, $\cdots$ \\
+Hence, a sequence such as $1010^{2}10^{3}1010^{2}10^{3}$ is not possible as the first $10^{3}$ fixes $n$ to $3$ making the next term $10^{4}$.
 
 \end{document}
