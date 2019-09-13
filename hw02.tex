@@ -17,88 +17,73 @@ length strings of $0's$ and $1's$ is uncountably infinite as any set in the coll
 
 \section{Finite Automata}
 \label{sec:s2}
-$L(M)$ is the set of strings that start and end with the same character. Hence, the empty string $\epsilon$ and single character strings are accepted in addition to the other strings starting and ending with the same symbol.
+$L(M)$ is the set of strings that start and end with the same character. Therefore, strings accepted: $\epsilon$, $0$, $1$, $0x0$, $1x1$
 \subsection{Nondeterministic}
 \begin{figure}[!ht]
+\label{fig:nfa}
 \centering
 \begin{tikzpicture}
 % States %
-\node[state, initial, accepting] at (0,0) (S) {A};
-\node[state] at (-1,3) (B) {B};
-\node[state] at (1,3) (C) {C};
-\node[state] at (-1,-3) (D) {D};
-\node[state] at (1,-3) (E) {E};
+\node[state, initial, accepting] at (-2,0) (S) {S};
+\node[state] at (0,2) (0x) {0x};
+\node[state] at (0,-2) (1x) {1x};
+\node[state, accepting] at (2,0) (F) {F};
 % Edges %
 \draw [->]
-    (S) edge[bend left, left] node{0} (B)
-    (S) edge[bend right, left] node{1} (D)
-    (B) edge[below] node{1} (C)
-    (C) edge[bend left, right] node{0} (S)
-    (D) edge[below] node{0} (E)
-    (E) edge[bend right, right] node{1} (S)
-    (S) edge[loop right] node{0,1} (S);
+    (S) edge[below] node{0} (0x)
+    (S) edge[above] node{1} (1x)
+    (S) edge[above] node{0,1} (F)
+    (0x) edge[below] node{0} (F)
+    (1x) edge[above] node{1} (F)
+    (0x) edge[loop above] node{0,1} (0x)
+    (1x) edge[loop below] node{0,1} (1x);
 \end{tikzpicture}
 \caption{NFA for \hyperref[sec:s2]{Section 2}}
-\label{fig:nfa}
 \end{figure}
-The following \hyperref[tab:nfa]{state table} can be constructed from the above \hyperref[fig:nfa]{drawing representation}. The accepting state ($A$) is marked with $*$. There are three equivalent states, namely, $A$, $[AE]$, and $[AC]$.
+The following \hyperref[tab:nfa]{state table} can be constructed from the above \hyperref[fig:nfa]{drawing representation}. The accepting states ($S,[0xF],[1xF]$) are marked with $*$.
 \begin{table}[!ht]
+\label{tab:nfa}
 \centering
 \begin{tabular}{c| c c}
      & $0$ & $1$  \\
     \hline
-    $A*$ & $[AB]$ & $[AD]$ \\
-    $[AB]$ & $[AB]$ & $[CD]$ \\
-    $[AD]$ & $[BE]$ & $[AD]$ \\
-    $[CD]$ & $[AE]$ & $\emptyset$ \\
-    $[BE]$ & $\emptyset$ & $[AC]$ \\
-    $[AE]$ & $[AB]$ & $[AD]$ \\
-    $\emptyset$ & $\emptyset$ & $\emptyset$ \\
-    $[AC]$ & $[AB]$ & $[AD]$
+    $S*$ & $[0xF]$ & $[1xF]$ \\
+    $[0xF]*$ & $[0xF]$ & $0x$ \\
+    $[1xF]*$ & $1x$ & $[1xF]$ \\
+    $0x$ & $[0xF]$ & $0x$ \\
+    $1x$ & $1x$ & $[1xF]$
 \end{tabular}
 \caption{State Table for \hyperref[fig:nfa]{NFA}}
-\label{tab:nfa}
 \end{table}
+\paragraph{}
+\small [AB] is a new state needed in the DFA that corresponds to the next state being either A or B in the equivalent NFA. Hence, in the \hyperref[tab:nfa]{table above}, from $S$, on seeing a $0$ or a $1$, we can either go to the $0x$ or the $F$ state or the $1x$ or the $F$ state respectively.
+
 \subsection{Deterministic}
-By the \hyperref[tab:nfa]{state table}, we can see that we need only 5 states to construct the deterministic automation. The 5 states are $A,[AB],[AD],[CD],[BE]$ where $A$ is the start state. Noting the presence of $A$ in other \textit{composite} states, $[AB]$ and $[AD]$ need to be made accepting states as well. Moreover, as $[BE]$ and $[CD]$ go to $\emptyset$, we shall respect that in our convergence of states. Hence, the DFA can be represented by the following \hyperref[tab:dfa]{state table} and \hyperref[fig:dfa]{drawing}.
-\\
-\begin{table}[!ht]
-\centering
-\begin{tabular}{c| c c}
-     & $0$ & $1$  \\
-    \hline
-    $A$* & $[AB]$ & $[AD]$ \\
-    $[AB]$ & $[AB]$ & $[CD]$ \\
-    $[AD]$ & $[BE]$ & $[AD]$ \\
-    $[CD]$ & $[AB]$ & $\emptyset$ \\
-    $[BE]$ & $\emptyset$ & $[AD]$
-\end{tabular}
-\caption{State Table for \hyperref[fig:dfa]{DFA}}
-\label{tab:dfa}
-\end{table}
+We need 5 states for the equivalent DFA of the \hyperref[fig:nfa]{NFA} above ($S$, $0xF$, $1xF$, $0x$, $1x$). Of them, the first three are accepting states. The \hyperref[fig:dfa]{drawing} representation of the equivalent DFA is as below
 \begin{figure}[!ht]
+\label{fig:dfa}
 \centering
 \begin{tikzpicture}
 % States %
-\node[state, initial, accepting] at (0,0) (S) {A};
-\node[state, accepting] at (-1,2) (AB) {AB};
-\node[state, accepting] at (1,-2) (AD) {AD};
-\node[state] at (1,2) (CD) {CD};
-\node[state] at (-1,-2) (BE) {BE};
+\node[state, initial, accepting] at (-2,0) (S) {S};
+\node[state, accepting] at (0,2) (0xF) {0xF};
+\node[state, accepting] at (0,-2) (1xF) {1xF};
+\node[state] at (2,2) (0x) {0x};
+\node[state] at (2,-2) (1x) {1x};
 % Edges %
 \draw [->]
-    (S) edge[left] node{0} (AB)
-    (AB) edge[bend right, below] node{1} (CD)
-    (CD) edge[bend right, above] node{0} (AB)
-    (AB) edge[loop left] node{0} (AB);
-\draw [->]
-    (S) edge[right] node{1} (AD)
-    (AD) edge[bend right, above] node{0} (BE)
-    (BE) edge[bend right, below] node{1} (AD)
-    (AD) edge[loop right] node{1} (AD);
+    (S) edge[left] node{0} (0xF)
+    (S) edge[left] node{1} (1xF)
+    (0xF) edge[above] node{1} (0x)
+    (0xF) edge[loop above] node{0} (0xF)
+    (1xF) edge[below] node{0} (1x)
+    (1xF) edge[loop below] node{1} (1xF)
+    (0x) edge[bend left, below] node{0} (0xF)
+    (0x) edge[loop right] node{1} (0x)
+    (1x) edge[bend right, above] node{1} (1xF)
+    (1x) edge[loop right] node{0} (1x);
 \end{tikzpicture}
-\caption{DFA given by \hyperref[tab:dfa]{DFA State Table}}
-\label{fig:dfa}
+\caption{DFA given by \hyperref[tab:nfa]{NFA State Table}}
 \end{figure}
 
 \section{Set of strings}
@@ -118,7 +103,8 @@ The string must start with a $10$ due to the left part. The right part forces us
 \begin{center}
     $\{101, 1010^{2}10^{3}, 1010^{2}10^{3}10^{4}10^{5}, 1010^{2}10^{3}10^{4}10^{5}10^{6}10^{7}, \cdots\}$
 \end{center}
-Note that there must be an odd number of $0$ blocks as either side of the conjunction requires at least one block of $0's$ along with $S^*$ which is made of an even number of blocks of $0$.
+\paragraph{}
+\small Note that there must be an odd number of $0$ blocks as either side of the conjunction requires at least one block of $0's$ along with $S^*$ which is made of an even number of blocks of $0$.
 
 \section{Expression Formation}
 Given $S_1 = \{ 10^{n}10^{n+1} | n \geq 1 \}$ and $S_2 = \{ 10^{n}10^{2n} | n \geq 1 \}$ and the following union:
@@ -127,10 +113,13 @@ Given $S_1 = \{ 10^{n}10^{n+1} | n \geq 1 \}$ and $S_2 = \{ 10^{n}10^{2n} | n \g
     $\cup$ \\
     $\{1010^{2}10^{3}10^{6}10^{7}10^{14}\cdots10^{2^{n+2}-2} | n \geq 1 \}$
 \end{center}
-Hence, when $n=1$, $S = \{1010^{2}10^{3}, 1010^{2}10^{3}10^{6}\}$. When $n=2$, $S = \{1010^{2}10^{3}10^{6}10^{7}, 1010^{2}10^{3}10^{6}10^{7}10^{14}\}$. \\
-As the length of the strings is increasing, $S$ can simply be written as $S_2S_1(S_2S_1)^*$. The $S_2$ takes care of the doubling (which occurs first, whenever there is an odd block of $0's$) and the $S_1$ takes care of the increment (which occurs second, whenever there is an even block of $0's$). The $S_2$ and $S_1$ not in the brackets force the exclusion of the empty string $\epsilon$. The $()^*$ assures that the sequence can be repeated multiple times, but in that order (of $S_2S_1$). 
-\\
-Note that since a part of the previous $S_1$ will be a part of the consecutive $S_2$, $n$ must strictly be increasing and the following pattern for the blocks of $0's$ will appear - double, increment, double, increment, $\cdots$.
+Hence, \\
+When $n=1$, $S = \{1010^{2}10^{3}, 1010^{2}10^{3}10^{6}\}$.\\ When $n=2$, $S = \{1010^{2}10^{3}10^{6}10^{7}, 1010^{2}10^{3}10^{6}10^{7}10^{14}\}$ \\
+As the length of the strings is increasing, $S$ can simply be written as $S_2S_1(S_2S_1)^*$
+\paragraph{}
+The $S_2$ takes care of the doubling (which occurs first, whenever there is an odd block of $0's$) and the $S_1$ takes care of the increment (which occurs second, whenever there is an even block of $0's$). The $S_2$ and $S_1$ not in the brackets force the exclusion of the empty string $\epsilon$. The $()^*$ assures that the sequence can be repeated multiple times, but in that order (of $S_2S_1$).
+\paragraph{}
+\small Note that since a part of the previous $S_1$ will be a part of the consecutive $S_2$, $n$ must strictly be increasing and the following pattern for the blocks of $0's$ will appear - double, increment, double, increment, $\cdots$.
 Hence, a sequence such as $1010^{2}10^{3}1010^{2}10^{3}$ is not possible as the first $10^{3}$ fixes $n$ to $3$ making the next term $10^{6}$ (and the subsequent term to $10^{7}$ resulting in $1010^{2}10^{3}10^{6}10^{7}$). Remember that $S_2$ is followed before $S_1$.
 
 \end{document}
