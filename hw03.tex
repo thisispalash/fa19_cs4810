@@ -1,10 +1,224 @@
 \documentclass[11pt,letterpaper]{article}
 \usepackage{preamble}
 
+\renewcommand\thesubsection{\thesection.\alph{subsection}}
+
 \title{Homework Assignment 03 \\
-    \small Due: }
+    \small Due: September 20, 2019 }
 
 \begin{document}
 \maketitle
+
+\section{Regex Construction}
+
+\subsection{(a $\wedge$ b)}
+\label{sec:1a}
+The given requirement translates to the following automata.
+\begin{figure}[!ht]
+\label{fig:1a}
+\centering
+\begin{tikzpicture}
+% States %
+\node[state, initial] at (-2,0) (S) {S};
+\node[state] at (0,1) (a) {a};
+\node[state] at (0,-1) (b) {b};
+\node[state, accepting] at (2,0) (F) {F};
+% Edges %
+\draw [->]
+    (S) edge[loop above] node{c} (S)
+    (S) edge[above] node{a} (a)
+    (S) edge[below] node{b} (b)
+    (a) edge[loop above] node{a,c} (a)
+    (a) edge[above] node{b} (F)
+    (b) edge[loop below] node{b,c} (b)
+    (b) edge[below] node{a} (F)
+    (F) edge[loop right] node{a,b,c} (F);
+\end{tikzpicture}
+\caption{Automata for \hyperref[sec:1a]{Section 1(a)}}
+\end{figure}
+\\The automata translates to the following regex:
+\begin{center}
+    $ c^*(a(a+c)^*b + b(b+c)^*a)(a+b+c)^* $
+\end{center}
+
+\subsection{$5^{th}$ from the end}
+We know that the $5^{th}$ symbol from the end has to be a $1$. It can be followed by any combination of $0$'s and $1$'s, so long as there are only $4$. Also, it does not matter how many, if any, combinations of $0$'s and $1$'s precede the $5^{th}$ symbol from the end. Then, the required regex is,
+\begin{center}
+    $ (0 + 1)^*(1)(0+1)(0+1)(0+1)(0+1) $
+\end{center}
+
+\subsection{odd $1$'s}
+The string must have at least one $1$ (the smallest odd number). That $1$ can be preceded by any number of $0$'s. Finally, it can be followed by any number of $0$'s or an even number of $1$'s. Therefore, the required expression is,
+\begin{center}
+    $ 0^*1(0 + 10^*1)^* $
+\end{center}
+
+\subsection{concatenation}
+This string can be expressed by two expressions concatenated together. The first expression contains no $11$ and the second one contains no $00$. In the expression containing no pairs of $1$'s, every $1$ must be followed by a $0$. The string can end with a $0$ (ie, $\epsilon$ or a $1$. Hence, $ (0+10)^*(1+\epsilon) $ describes the first set. On flipping the $1$'s and $0$'s you can obtain the second set (of strings not containing $00$) to get $ (1+01)^*(0+\epsilon) $. Concatenating the two expression yields $ (0+10)^*(1+\epsilon)(1+01)^*(0+\epsilon) $ where $ (1+\epsilon)(1+01)^* $ can be simplified to just $ (1+01)^* $, giving us the final regex,
+\begin{center}
+    $(0+10)^* (1+01)^*(0+\epsilon)$
+\end{center}
+
+\pagebreak
+
+
+\section{Machine Construction}
+\label{sec:2}
+
+\subsection{fools errand}
+The regex may be constructed as an intersection of two sets, namely, the set that contains an odd number of $0$'s and the set containing the number of $1$'s divisible by $3$. The machines for both the sets can be represented as:
+\begin{figure}[!ht]
+\label{fig:2a1}
+\centering
+\begin{tikzpicture}
+% States %
+\node[state, initial] at (-1,0) (E) {E};
+\node[state, accepting] at (1,0) (O) {O};
+% Edges %
+\draw [->]
+    (E) edge[loop above] node{1} (E)
+    (E) edge[bend left, above] node{0} (O)
+    (O) edge[bend left, below] node{0} (E)
+    (O) edge[loop above] node{1} (O);
+\end{tikzpicture}
+\caption{Odd number of $0$'s}
+\end{figure}
+
+\begin{figure}[!ht]
+\label{fig:2a2}
+\centering
+\begin{tikzpicture}
+% States %
+\node[state, initial] at (-3,0) (S) {S};
+\node[state] at (-1,0) (1) {1};
+\node[state] at (1,0) (2) {2};
+\node[state, accepting] at (3,0) (F) {F};
+% Edges %
+\draw [->]
+    (S) edge[loop above] node{0} (S)
+    (1) edge[loop above] node{0} (1)
+    (2) edge[loop above] node{0} (2)
+    (F) edge[loop above] node{0} (F)
+    (S) edge[above] node{1} (1)
+    (1) edge[above] node{1} (2)
+    (2) edge[above] node{1} (F)
+    (F) edge[bend left, below] node{1} (1);
+\end{tikzpicture}
+\caption{Number of $1$'s divisible by $3$}
+\end{figure}
+The machines give the regex \hyperref[fig:2a1]{$1^*0(1+01^*0)^*$} and \hyperref[fig:2a2]{$0^*10^*10^*1(0+10^*10^*1)^*$} respectively. However, having this information does not really help us as finding the intersection of the two is still quite difficult.
+\pagebreak
+
+
+\subsection{dfa}
+The combination of the DFAs above results in the \hyperref[tab:2b]{state table} on the next page. Converting the state table to a \hyperref[fig:2b]{visual representation} is easy.
+\begin{table}[!ht]
+\label{tab:2b}
+\centering
+\begin{tabular}{c| c c}
+     & $0$ & $1$  \\
+    \hline
+    $\rightarrow [E,S]$ & $[O,S]$ & $[E,1]$ \\
+    $[O,S]$ & $[E,S]$ & $[O,1]$ \\
+    $[E,1]$ & $[O,1]$ & $[E,2]$ \\
+    $[O,1]$ & $[E,1]$ & $[O,2]$ \\
+    $[E,2]$ & $[O,2]$ & $[E,F]$ \\
+    $[O,2]$ & $[E,2]$ & $[O,F]$ \\
+    $*[O,F]$ & $[E,F]$ & $[O,1]$ \\
+    $[E,F]$ & $[O,F]$ & $[E,1]$ \\
+\end{tabular}
+\caption{State table for the combination of \hyperref[fig:2a1]{Figure 2} and \hyperref[fig:2a2]{Figure 3}}
+\end{table}
+\begin{figure}[!ht]
+\label{fig:2b}
+\centering
+\begin{tikzpicture}
+% States %
+\node[state, initial] at (-6,4) (ES) {E,S};
+\node[state] at (-3,4) (OS) {O,S};
+\node[state] at (-6,0) (E1) {E,1};
+\node[state] at (-3,0) (O1) {O,1};
+\node[state] at (0,-2) (E2) {E,2};
+\node[state] at (0,0) (O2) {O,2};
+\node[state, accepting] at (3,0) (OF) {O,F};
+\node[state] at (0,-4) (EF) {E,F};
+% Edges %
+\draw [->]
+    (ES) edge[bend left, above] node{0} (OS)
+    (ES) edge[left] node{1} (E1)
+    (OS) edge[bend left, below] node{0} (ES)
+    (OS) edge[right] node{1} (O1)
+    (E1) edge[bend left, above] node{0} (O1)
+    (E1) edge[bend right, below] node{1} (E2)
+    (O1) edge[bend left, above] node{0} (E1)
+    (O1) edge[above] node{1} (O2)
+    (E2) edge[bend left, left] node{0} (O2)
+    (E2) edge[left] node{1} (EF)
+    (O2) edge[bend left, right] node{0} (E2)
+    (O2) edge[above] node{1} (OF)
+    (OF) edge[above] node{0} (EF)
+    (OF) edge[bend right, above] node{1} (O1)
+    (EF) edge[bend right, right] node{0} (OF)
+    (EF) edge[bend left, left] node{1} (E1);
+\end{tikzpicture}
+\caption{Odd $0$'s and number of $1$'s divisible by $3$}
+\end{figure}
+
+\subsection{regex}
+Using the State Removal Method (shown in class) on \hyperref[fig:2b]{Figure 4}, the \hyperref[fig:2c]{2 state automaton} is obtained.
+\begin{figure}[!ht]
+\label{fig:2c}
+\centering
+\begin{tikzpicture}
+% States %
+\node[state, initial] at (-2,0) (S) {S};
+\node[state, accepting] at (2,0) (F) {A};
+% Edges %
+\draw [->]
+    (S) edge[loop above] node{$w$} (S)
+    (S) edge[bend left, above] node{$x$} (F)
+    (F) edge[loop above] node{$y$} (F)
+    (F) edge[bend left, below] node{$z$} (S);
+\end{tikzpicture}
+\caption{Final Automaton for \hyperref[sec:2]{required language}}
+\end{figure}
+\\
+From the automaton, the regex created is, $(w + xy^*z)^*xy*$ \\
+where, \\
+$w = 00 + (01+10)(0+1(00)^*011)$ \\
+$x = (01+10)(1(00)^*1+1(00)^*010)$ \\
+$y = (1 + 01(00)^*(01+10))(1(00)^*1+1(00)^*010)$ \\
+$z = (1 + 01(00)^*(01+10))(0+1(00)^*011)$
+\paragraph{note}
+We could try and simplify the above expression(s) but that would take too much time. Perhaps using a program might be better.
+
+\section{Shuffle}
+Let $M_A = (Q_A, \Sigma, \delta_A, q_A, F_A)$ represent the machine that accepts set $A$ and $M_B = (Q_B, \Sigma, \delta_B, q_B, F_B)$ represent the machine that accepts set $B$. An NFA can be created from the combinations of the two machines such that it moves, in the appropriate DFA on seeing the appropriate character. \\
+The NFA can be described as $M = ((Q_A \times Q_B), \Sigma, \delta, (q_A \times q_B), (F_A \times F_B))$ where, $\delta ((s_A \times s_B),x) = \{(\delta_A (s_A,x) \times p_B), (p_A \times \delta_B (s_B,x))\}$ for all $x \in \Sigma$ [ie, if x changes state in A, then the state in B is not changed while the new state of A is made current and vice versa]. \\
+The NFA accepts the string $w$ iff both, $M_A$ and $M_B$, are in the accepting states, where $w$ is the string $a_1b_1 \cdots a_nb_n$ where $a_1 \cdots a_n \in A$ and  $b_1 \cdots b_n \in B$ and every $a_i,b_i \in \Sigma^*$. This can be proved by structural induction,
+\paragraph{Basis} Let $w = a_1b_1$, where $a_1,b_1 \in \Sigma^*$. We simply split the string into two parts $a_1$ and $b_1$. They will both independently reach their respective final states and hence $w$ will be accepted. It is trivial that the same holds if $w = b_1a_1$.
+\paragraph{Induction} Any string $w = a_1b_1 \cdots a_nb_n$ can be reduced to the form $w = w_1 \cdots w_n$, where $w_i = a_ib_i$ and $a_i,b_i \in \Sigma^*$. This is the same as the basis multiple times and hence, $w$ will be accepted.
+\paragraph{Conclusion} Hence, the class of regular sets is closed under shuffle (of two strings).
+\pagebreak
+
+\section{Reverse Homomorphism}
+Given, $\Sigma = \{a,b\}$, $T = \{0,1\}$, $L = (0+10)^*$, and finally, $h(a)=00, h(b)=10$. By definition, $h^{-1}(L) = \{w \mid w \in \Sigma^* \wedge h(w) \in L\}$. Hence, the task is to simply create a regex that is contained in language $L$ after it passes through the homomorphism $h: \Sigma \to T$. \\
+In language $L$, every $1$ is necessarily followed by a $0$. Hence, $w$ cannot end with a $b$. It can start with a $b$ however, as $01$ is contained in $L$. Notice that $a$ is possible anywhere as $00$ is always contained in $L$. Lastly, $\epsilon$ is also contained in $L$ (implying a $()^*$ on $w$). Therefore, $w$ may start with a $a$ or a $b$ but ends in a $a$. Also, multiple variations of $w$ may be concatenated.
+\begin{center}
+    Hence, $w = ((a+b)^*a^*)^*$ which can be simplified to $(a+ba)^*$.
+\end{center}
+\paragraph{note}
+As a \textit{sanity check}, let us put $w$ through $h$;
+$h(w)$ $=$ $(h(a)+h(b)h(a))^*$ $=$ $(00+0100)^*$ $\in$ $L$
+
+\section{Lets delete!}
+(If one thinks about some strings, they will realize that the reduced regex is of the form $(0^*10^*)^*$) \\
+Let us consider a homomorphism described as $h_1(j) = j$ and $h_1(\jmath) = j$. The transformation $h_1^{-1}(L)$, where $L$ is the required language, would result in the set of $j_i$'s randomly interspersed with variable $\jmath_i$'s.
+The intersection of this set with the set of languages represented by the regex $(\jmath+k)^*j(\jmath+k)^*$, we get the second set ($j$ is the character $1$ and $\jmath$ is the string $11$). \\
+Now if we consider another homomorphism described as $h_2(j) = j$ and $h_2(\jmath) = \epsilon$. On passing the set obtained in the previous paragraph through this second homomorphism, we get the required set of strings described by $k^*jk^*$ which is the required set.
+\\
+\begin{center}
+    $-$ x $-$
+\end{center}
 
 \end{document}
