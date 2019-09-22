@@ -2,9 +2,89 @@
 \usepackage{preamble}
 
 \title{Homework Assignment 04 \\
-    \small Due: }
+    \small Due: September 27, 2019}
 
 \begin{document}
 \maketitle
+
+\section{(inverse) homomorphism}
+\label{sec:1}
+By the last question of the previous homework, 
+$h^{-1}(L) = (a+ba)^*$ 
+[Problem Statement: \textit{Let $L=(0+10)^*$, $h(a)=00$, and $h(b)=01$. What is $h^{-1}(L)$?}]. 
+Passing $h^{-1}{L}$ through $h$ is trivial as $h(a)$ and $h(b)$ are known. Hence, $h(h^{\-1}{L}) = (h(a) + h(b)h(a))^* = (00+0100)^*$. \\
+$L$ is described as $(0+10)^*$. Hence, the first part of the answer above ($(00)^*$) is contained within $L$. Moreover, the second part, $(0100)^*$ is contained within $L$ as well. \small{If $m=0$ and $n=10$, $L=(m+n)^*$. $00$ is the same as $(mm)^*$ and $(0100)^*$ is the same as $(mnm)^*$.} 
+Hence, the result above, $h(h^{\-1}{L}) = (00+0100)^*$ is contained within $L = (0+10)^*$.
+
+\section{which is larger?}
+\begin{center}
+    $h(h^{-1}(L)) \subseteq	L$
+\end{center}
+\paragraph{cheating}
+The wording of the last question of the previous homework ``\textit{Show that your answer for $h(h^{-1}(L))$ is contained in $L$}" suggests the above relation.
+\paragraph{informal}
+From \hyperref[sec:1]{Section 1}, we see that $h(h^{\-1}{L}) = (00+0100)^*$ which is contained in $L=(0+10)^*$. However, $L$ contains many more strings which are not in $h(h^{\-1}{L})$ such as, $0, 10, 010, 0010, \cdots$ Based on this \textit{evidence}, $|L| > |h(h^{-1}(L))|$ and hence the above relation holds true.
+
+\section{where are the proofs?!}
+Let the theorem be denoted by $a$ and the proof be denoted by $\^{a}$. Then we can create a homomorphism such that all possible proofs are inserted randomly between the theorems. More formally, $h_1(a) = a \wedge h_1(\^{a}) = a$. Then $h^{-1}(book)$ gives the set of all strings where $\^{a}$ appears at random intervals, covering all possibilities (ie, a set containing $2^n$ strings). \\
+Now, the required regular set is a set containing all the theorems with the proofs. Intersecting the book (passed through $h_1$) with the language of this regular set yields in all strings where the theorem is followed by the proof. Formally, $h_1^{-1}(book) \cap (a\^{a})^*$ is the resulting set. \\
+Finally, let us create another homomorphism which maps all the theorems to itself and discards all the proofs. We can describe such a transformation by $h_2(a) = a \wedge h_2(\^{a}) = \epsilon$. Passing the set obtained above through this transformation, results in the set of all theorems but no proofs. \\
+Therefore we can extract the set of all theorems by the following operation,
+\begin{center}
+    $h_2(h_1^{-1}(book) \cap (a\^{a})^*)$ where, \\
+    $h_1(a) = a \wedge h_1(\^{a}) = a$, \\
+    $h_2(a) = a \wedge h_2(\^{a}) = \epsilon$
+\end{center}
+
+\section{closure has come to me, myself}
+\begin{center}
+    $M = (Q,\Sigma,\delta,q_0,F)$
+\end{center}
+We can redirect the language to be passed under a described homomorphism $h$ and then that transformed set of strings to go through the machine $M$. We can finally also check if the machine accepts the initial string $x$ as well. On doing so, we construct a machine \hyperref[fig:4a]{as such}.
+We can remove the second machine and redirect the output of $h$ in \hyperref[fig:4a]{Figure 1}. This allows us to remove the $and$ state as well. This construction looks like \hyperref[fig:4b]{Figure 2}.
+Therefore an automaton that accepts $h(L(M))$ is the same as that which accepts $L(M)$. Hence, $M = (Q,\Sigma,\delta,q_0,F)$ describes a machine that accepts $h(L(M))$ \pagebreak
+\begin{figure}[!htp]
+\label{fig:4a}
+\centering
+\begin{tikzpicture}
+% States %
+\node[state, initial] at (-4,1) (S) {};
+\node[state] at (-1,2) (h) {$h$};
+\node[] at (0,0) (M) {$M$};
+\node[] at (1,2) (Mh) {$M$};
+\node[state] at (3,1) (A) {$and$};
+\node[state, accepting] at (6,1) (F) {};
+% Edges %
+\draw [->]
+    (S) edge[above] node{x} (h)
+    (S) edge[above] node{x} (M)
+    (h) edge[above] node{h(L)} (Mh)
+    (M) edge[above] node{1} (A)
+    (Mh) edge[above] node{1} (A)
+    (A) edge[above] node{$1\wedge1$} (F);
+\end{tikzpicture}
+\caption{Closure under homormorphism}
+\end{figure}
+\begin{figure}[!htp]
+\label{fig:4b}
+\centering
+\begin{tikzpicture}
+% States %
+\node[state, initial] at (-3,0) (S) {};
+\node[state] at (0,2) (h) {$h$};
+\node[] at (0,0) (M) {$M$};
+\node[state, accepting] at (3,0) (F) {};
+% Edges %
+\draw [->]
+    (S) edge[above] node{x} (h)
+    (S) edge[above] node{x} (M)
+    (h) edge[right] node{h(L)} (M)
+    (M) edge[above] node{1} (F);
+\end{tikzpicture}
+\caption{Closure under homormorphism (simple)}
+\end{figure}
+
+\section{inverse substitution}
+
 
 \end{document}
