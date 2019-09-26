@@ -212,7 +212,7 @@ As a \textit{sanity check}, let us put $w$ through $h$;
 $h(w)$ $=$ $(h(a)+h(b)h(a))^*$ $=$ $(00+0100)^*$ $\in$ $L$
 
 \section{Lets delete!}
-(If one thinks about some strings, they will realize that the reduced regex is of the form $(0^*10^*)^*$) \\
+(If one thinks about some strings, they will realize that the reduced regex is of the form $0^*10^*$) \\
 Let us consider a homomorphism described as $h_1(j) = j$ and $h_1(\jmath) = j$. The transformation $h_1^{-1}(L)$, where $L$ is the required language, would result in the set of $j_i$'s randomly interspersed with variable $\jmath_i$'s.
 The intersection of this set with the set of languages represented by the regex $(\jmath+k)^*j(\jmath+k)^*$, we get the second set ($j$ is the character $1$ and $\jmath$ is the string $11$). \\
 Now if we consider another homomorphism described as $h_2(j) = j$ and $h_2(\jmath) = \epsilon$. On passing the set obtained in the previous paragraph through this second homomorphism, we get the required set of strings described by $k^*jk^*$ which is the required set.
