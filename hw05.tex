@@ -2,9 +2,75 @@
 \usepackage{preamble}
 
 \title{Homework Assignment 05 \\
-    \small Due: }
+    \small Due: October 4, 2019}
 
 \begin{document}
 \maketitle
+
+\section{same same but different}
+Regular expressions are one way to represent the strings in a language. The same set of strings can be represented by an automaton as well. Hence, the easiest way to check if two expressions are equivalent, we should construct a automaton for each expression and then minimize the constructed automaton. As there is a unique minimized automaton for every set, if the obtained minimized automata are the same, then the regular expressions that we started from denote the same set.
+
+\section{homomorphism}
+Let the given set be denoted by $S$. Therefore, $S = {wcw | w \in (a+b)^*}$. Consider a homomorphism $h_1$ such that $h_1(a+b+c)=(a+b+c)$ and $h_1(\^{a}+\^{b}+\^{c})=(a+b+c)$ (obviously, the letters match on both sides of the equation). Therefore, the inverse of transformation $h_1$ (ie, $h_1^{-1}(S)$ would yield the set that contains $2^n$ strings with the \textit{hats} randomly inserted in the strings in $S$. \\
+If that set is intersected with the set described by, $(a+b+c)^n(\^{a}+\^{b}+\^{c})^n$, we discard all the strings where the number of letters is not equal to number of letter hats. Finally, a second homomorphism $h_2$ that  transforms $\Sigma = {a,b,c}$ to $\Delta = {0,1}$ in the following ways, $h_2(a+b+c)=0$ and $h_2(\^{a}+\^{b}+\^{c})=1$, transforms the set obtained via intersection to the set $\{0^n1^n\}$. Hence, 
+\begin{center}
+    $h_2(h_1^{-1}(S) \cap (a+b+c)^n(\^{a}+\^{b}+\^{c})^n) = \{0^n1^n\}$
+\end{center}
+
+\section{pumping lemma}
+The given set describes a language defined as $L=(a+b)^*c(a+b)^*$. Let us consider a string $v \in L$ such that $v = xyz$ and $|xy| \leq |v|$ where $x=(a+b)^*,y=c,z=(a+b)^*$. \\
+The pumping lemma states that if $v=xyz \in L$ and $L$ is regular, then $\exists i \geq 0$ such that $xy^iz \in L$. By definition, $L$ can contain only one $c$ and hence, the claim will not hold true whenever $i \neq 1$. As $xy^iz \notin L, i > 1$, $L$ is not regular. Hence, the given set is not regular.
+
+\section{are you not compelled?}
+Similar to the previous question, let us split the strings in our set (read: language) into the form $xyz$ where $x=(01)^n0^*, y=010, z=(10)^n1^*(\epsilon+1)$. In other words, let $y$ be the troublesome $010$ and $x$ and $z$ contain an equal number of $01$s and $10$s respectively. The string may contain contain other $0$s and $1$s and that is taken care of with the $0^*$ in $x$ and the $1^*(\epsilon+1)$ in $z$. The variation in length is also taken care of with the $a^*, a={0,1}$ and $(\epsilon+1)$. Hence, the given set appears to be regular under preliminary thinking. \\
+Note that the above expressions do not consider all possibility of strings. However, cases can be taken and it can be showed similarly that $L$ is indeed regular.
+\pagebreak
+\section{minimization}
+The given automata can be drawn as \hyperref[fig:5a]{below}. If you notice, states $A$ and $D$ and $B$ and $E$ can be merged to minimize the automata. The \hyperref[fig:5a]{minimized automata} contains only three states, namely - $A$, $B$, and $C$. The bidirectional flow between the states ($A$-$D$, $B$-$E$) get converted to loops. The automaton accepts all strings that contain at least one $0$ and ends with a $1$.
+\begin{figure}[!ht]
+\label{fig:5a}
+\centering
+\begin{tikzpicture}
+% States %
+\node[state, initial] at (-2,0) (A) {A};
+\node[state] at (0,0) (B) {B};
+\node[state, accepting] at (2,0) (C) {C};
+\node[state] at (-2,2) (D) {D};
+\node[state] at (0,2) (E) {E};
+% Edges %
+\draw [->]
+    (A) edge[above] node{0} (B)
+    (A) edge[left] node{1} (D)
+    (B) edge[right] node{0} (E)
+    (B) edge[bend left, above] node{1} (C)
+    (C) edge[bend left, below] node{0} (B)
+    (C) edge[loop right] node{1} (C)
+    (D) edge[above] node{0} (E)
+    (D) edge[] node{} (A)
+    (E) edge[] node{} (B)
+    (E) edge[bend left, above] node{1} (C);
+\end{tikzpicture}
+\caption{Given automata}
+\end{figure}
+\begin{figure}[!ht]
+\label{fig:5b}
+\centering
+\begin{tikzpicture}
+% States %
+\node[state, initial] at (-2,0) (A) {A};
+\node[state] at (0,0) (B) {B};
+\node[state, accepting] at (2,0) (C) {C};
+% Edges %
+\draw [->]
+    (A) edge[above] node{0} (B)
+    (A) edge[loop above] node{1} (A)
+    (B) edge[loop above] node{0} (B)
+    (B) edge[bend left, above] node{1} (C)
+    (C) edge[bend left, below] node{0} (B)
+    (C) edge[loop above] node{1} (C);
+\end{tikzpicture}
+\caption{Minimized automata}
+\end{figure}
+
 
 \end{document}
