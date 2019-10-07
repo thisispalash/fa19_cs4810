@@ -7,14 +7,70 @@
 \begin{document}
 \maketitle
 
-\section{disorderly in thought, neat in writing}
+\section{neat(computer) $>$ neat(human)}
+On expanding based on the first rule, we get $S = bA$. The $A$ can then be expanded in three different ways,
+\begin{itemize}
+    \item when $A = a$, $S = ba$ which contains an equal number of $a$'s and $b$'s.
+    \item when $A = aS$, $S = baS$ which contains an equal number of $a$'s and $b$'s and then contains another string $S$.
+    \item when $A = bAA$, $S = bbAA$ which contains two $b$'s and at least two $a$'s (as per the above two cases).
+\end{itemize}
+Therefore, the first column of rules yield a language consisting of all strings with an equal number of $a$'s and $b$'s. The second column is simply the first column with $a$ and $b$ swapped and to show that it too yields the same language is trivial. \\
+Hence, the given grammar generates a language consisting of all strings with an equal number of $a$'s and $b$'s.
+\pagebreak
 
 \section{$\{(a^*b)^i c^i$ $|$ $i>0\}$}
+\begin{table}[!h]
+    \centering
+    \begin{tabular}{c c c}
+    $S \rightarrow (Ab)Ic$ & 
+    $I \rightarrow \epsilon$ &
+    $A \rightarrow \epsilon$ \\
+    
+    &
+    $I \rightarrow (Ab)Ic$ &
+    $A \rightarrow aA$
+    \end{tabular}
+    \label{tab:2}
+\end{table}
 
 \section{$\{a^i b^j c^k$ $|$ $i+k=j\}$}
+\begin{table}[!h]
+\centering
+\begin{tabular}{c c c}
+$S \rightarrow \epsilon$ & 
+&
+\\
+
+$S \rightarrow aAbC$ &
+$A \rightarrow \epsilon$ & 
+$C \rightarrow \epsilon$ \\
+
+$S \rightarrow AbCc$ &
+$A \rightarrow aAb$ &
+$C \rightarrow bCc$
+\end{tabular}
+\label{tab:03}
+\end{table}
 
 \section{$\{a^i b^j c^k d^l$ $|$ $i=k \vee j=l\}$}
 
+\begin{center}
+    $S \rightarrow aSc$ \\
+    $S \rightarrow bSd$ \\
+    $S \rightarrow \epsilon$
+\end{center}
+
 \section{$\{a^i b^j c^k$ $|$ $i \leq j \leq k\}^{'}$}
+\begin{center}
+$\{a^i b^j c^k$ $|$ $i \leq j \leq k\}^{'} = \{a^i b^j c^k$ $|$ $i > j > k\}$ \\
+\end{center}
+\begin{table}[!h]
+    \centering
+    \begin{tabular}{c c c}
+    $S \rightarrow aAbBc$ & $A \rightarrow aA$ & $B \rightarrow bB$ \\
+    $S \rightarrow aAb$ & $A \rightarrow a$ & $B \rightarrow b$
+    \end{tabular}
+    \label{tab:5}
+\end{table}
 
 \end{document}
