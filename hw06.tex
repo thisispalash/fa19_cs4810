@@ -53,22 +53,60 @@ $C \rightarrow bCc$
 \end{table}
 
 \section{$\{a^i b^j c^k d^l$ $|$ $i=k \vee j=l\}$}
+Let us consider three cases, when $j=l=0$, when $i=k=0$, and when none of them are $i,j,k,l \neq 0$. The final grammar is simply a union of these cases.
+\begin{table}[!h]
+\label{tab:04a}
+\centering
+In addition, when $i=j=k=l=0$, $S \rightarrow \epsilon$ \\
+\begin{tabular}{c c c}
+&&\\
+$j=l=0$ &
+$i,j,k,l \neq 0$ &
+$i=k=0$ \\
+&&\\
+$S \rightarrow aAc$ &
+$S \rightarrow aBCd$ &
+$S \rightarrow bDd$ \\
 
-\begin{center}
-    $S \rightarrow aSc$ \\
-    $S \rightarrow bSd$ \\
-    $S \rightarrow \epsilon$
-\end{center}
+$A \rightarrow \epsilon$ &
+$B \rightarrow b$ &
+$D \rightarrow \epsilon$ \\
 
-\section{$\{a^i b^j c^k$ $|$ $i \leq j \leq k\}^{'}$}
+$A \rightarrow aAc$ &
+$B \rightarrow aBc$ &
+$D \rightarrow bDd$ \\
+
+& $C \rightarrow c$ &\\
+& $C \rightarrow bCd$ &\\
+
+\end{tabular} 
+\end{table}
+
+\section{complement of $\{a^i b^j c^k$ $|$ $i \leq j \leq k\}$}
 \begin{center}
 $\{a^i b^j c^k$ $|$ $i \leq j \leq k\}^{'} = \{a^i b^j c^k$ $|$ $i > j > k\}$ \\
 \end{center}
+The above set does not contain the empty string. The smallest possible strings are $aab$ and $aaabbc$ for two cases, when $k=0$ and $k \neq 0$.
 \begin{table}[!h]
     \centering
-    \begin{tabular}{c c c}
-    $S \rightarrow aAbBc$ & $A \rightarrow aA$ & $B \rightarrow bB$ \\
-    $S \rightarrow aAb$ & $A \rightarrow a$ & $B \rightarrow b$
+    \begin{tabular}{c c}
+    $S \rightarrow S_1$ & 
+    $S \rightarrow S_2$ \\
+    
+    $S_1 \rightarrow aaAb$ &
+    $S_2 \rightarrow aaaBC$ \\
+    
+    $A \rightarrow \epsilon$ &
+    $B \rightarrow bb$ \\
+    
+    $A \rightarrow aA$ &
+    $B \rightarrow abBC$ \\
+    
+    $A \rightarrow aAb$ &
+    $C \rightarrow \epsilon$ \\
+    
+    &
+    $C \rightarrow c$
     \end{tabular}
     \label{tab:5}
 \end{table}
