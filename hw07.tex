@@ -2,9 +2,116 @@
 \usepackage{preamble}
 
 \title{Homework Assignment 07 \\
-    \small Due: }
+    \small Due: October 18, 2019}
 
 \begin{document}
 \maketitle
+
+\section{minimize this}
+\begin{figure}[!ht]
+\label{fig:1a}
+\centering
+\begin{tikzpicture}
+% States %
+\node[state, initial] at (-5,0) (A) {$A$};
+\node[state] at (-3,1) (B) {$B$};
+\node[state, accepting] at (-1,1) (C) {$C$};
+\node[state, accepting] at (1,1) (D) {$D$};
+\node[state, accepting] at (3,1) (E) {$E$};
+\node[state] at (-3,-1) (F) {$F$};
+\node[state] at (-1,-1) (G) {$G$};
+% Edges %
+\draw [->]
+    (A) edge[above] node{0} (B)
+    (A) edge[below] node{1} (F)
+    (B) edge[above] node{0} (C)
+    (B) edge[bend left, right] node{1} (G)
+    (C) edge[above] node{0,1} (D)
+    (D) edge[bend left, above] node{0} (E)
+    (D) edge[loop above] node{1} (D)
+    (E) edge[loop right] node{0} (E)
+    (E) edge[bend left, below] node{1} (D)
+    (F) edge[bend left, above] node{0} (G)
+    (F) edge[loop below] node{1} (F)
+    (G) edge[loop right] node{0} (G)
+    (G) edge[bend left, below] node{1} (F);
+\end{tikzpicture}
+\caption{Given automaton}
+\end{figure}
+The \hyperref[fig:1a]{given automaton} accepting all strings that begin with a $00$. Hence, states $D,E,G$ can be eliminated entirely to create a automaton that has only 4 states - $A,B,C,F$. Such an automaton can be depicted as in \hyperref[fig:1b]{figure 2}. Essentially, state $G$ is merged into state $F$ and states $D$ and $E$ are merged into state $C$.
+\begin{figure}[!ht]
+\label{fig:1b}
+\centering
+\begin{tikzpicture}
+% States %
+\node[state, initial] at (-2,0) (A) {$A$};
+\node[state] at (0,1) (B) {$B$};
+\node[state, accepting] at (2,1) (C) {$C$};
+\node[state] at (0,-1) (F) {$F$};
+% Edges %
+\draw [->]
+    (A) edge[above] node{0} (B)
+    (A) edge[below] node{1} (F)
+    (B) edge[above] node{0} (C)
+    (B) edge[right] node{1} (F)
+    (C) edge[loop right] node{0,1} (C)
+    (F) edge[loop right] node{0,1} (F);
+\end{tikzpicture}
+\caption{minimal automaton}
+\end{figure}
+
+\section{intersected languages}
+\begin{center}
+    $L(G_1) \cap L(G_2) = \{10^1 10^2 10^3 10^6 10^7 10^{14} \dots 10^{2(2^n-1)}$ $|$ $\forall n \geq 1\}$
+\end{center}
+The set above contains a pattern - $\{10^{(2^n-1}10^{2(2^n-1)}\}$. We can construct two grammars to generate the languages $L(G_1) = \{10^{2^i-1}10^{2(2^n-1)}$ $|$ $i \geq 1, n \geq 1\}$ and $L(G_2) = \{10^{(2^n-1)}10^{2(2^i-1)}$ $|$ $n \geq 1, i \geq 1\}$. Both the grammars can be described by the same productions. How they are derived may differ in both the grammars. \\
+The productions create the set of strings with a $1$ followed by an odd number of $0$'s followed by a $1$ and an even number of $0$'s. Whenever $i=n$, ie, $L(G_1) = \{10^{(2^n-1)}10^{2(2^n-1)}\}$ and $L(G_2) = \{10^{(2^n-1)}10^{2(2^n-1)}\}$. Their intersection thus yields the required set.
+\begin{table}[!ht]
+    \label{tab:02}
+    \centering
+    \begin{tabular}{c}
+    $S \rightarrow 1A1AA$ \\
+    $A \rightarrow 0$ $|$ $AA0$ \\
+    \end{tabular}
+    \caption{Productions describing $G_1$ and $G_2$}
+\end{table}
+\pagebreak
+
+\section{a grammar for Hyde}
+\pagebreak
+% Done in OH on 10/18. Will update post submission.
+
+\section{the present matters !!}
+\paragraph{} While converting a multi state PDA, $P$, to a single state PDA, $P_S$, we need to be careful while popping the stack. In order to \textit{remember} the current state, we design a stack storing three pieces of information - the current state, symbol in $P$, the next state. Typically, we \textit{guess} the next state which is verified when $P$ moves between states. The key idea is to maintain adjacency. The stack is created such that the state transitioned \textit{to} in the previous element is the state transitioned \textit{from} in the next element.
+
+\paragraph{} Let $P = (Q, \Sigma, \Gamma, \delta, q_0, \#, F)$ and $P_S = (\{S\},\Sigma, (Q \times \Gamma \times Q), \delta_S, S, \#, \{S\})$. Then $\delta_S$ has three possible transitions, pop a symbol, replace a symbol, or pushes multiple symbols in the stack. In each of these, $P$ moves between states. Note that $P$ may just push down symbols without actually moving the state. This occurs whenever $q=p$.
+
+\paragraph{case 1} $\delta$ pops a symbol (ie, $\delta(p,a,X) = \{(q,\epsilon)\}$) \\
+In this case, $\delta_S$ pops the stack as well: $\delta_S(S,a,[pXq] = \{(S,\epsilon)\}$
+
+\paragraph{case 2} $\delta$ replaces a symbol (ie, $\delta(p,a,X) = \{(q,Y)\}$) \\
+In this case, we introduce another state ($\forall r \in Q$) for $\delta_S(S,a,[pXq])$. The transition in $P$ is reflected in $P_S$'s stack: $\delta_S(S,a,[pXq]) = \{(S,[qYr])\}$
+
+\paragraph{case 3} $\delta$ pushes a symbol (ie, $\delta(p,a,X) = \{(q,YX)\}$ \\
+In this case, we see the adjacency mentioned above. We introduce a state ($\forall r \in Q$) again. Now, the transition and $P$'s stack is reflected within $P_S$'s stack: $\delta_S(S,a,[pXq]) = \{(S,[qYr][rXp])\}$. Note that for multiple symbols, we simply keep pushing states in $P_S$ with multiple \textit{guess} states.
+
+\paragraph{} Hence, the issue of losing the current state while popping a symbol is resolved by storing the current and next state in the stack as well. Essentially, the states in $P$ are moved to the stack in $P_S$.
+
+\section{pumping lemma}
+Consider a string $z = a^n b^{n+1} c^{n+2}, |z| \geq n \in L = \{a^i b^j c^k$ $|$ $i < j < k\}$. Let that string be divided as $z = uvwxy$ with $|vwx| \leq n$ and $vx \neq \epsilon$. Given the two conditions, we have 5 different cases of $vwx$ as given below. We prove that the string $uv^iwx^iy \notin L$ for \textit{all} the cases.
+\paragraph{case 1} $vwx = a^p, 1 \leq p \leq n$ \\
+We can pump up to any number (ie, $i \geq 2$) to generate a string of the form $a^i b^j c^k$ where $i \geq j$. Thus, $uv^iwx^iy \notin L$.
+
+\paragraph{case 2} $vwx = a^p b^q, 1 \leq p+q \leq n$ \\
+We can again pump up to any number (ie, $i \geq 2$) to get a string $a^i b^j c^k$ such that $i \geq j \vee j \geq k$. Thus, $uv^iwx^iy \notin L$.
+
+\paragraph{case 3} $vwx = b^p, 1 \leq p \leq n$ \\
+Similar to case 1, we can pump up to any number (ie, $i \geq 2$) to show that the resulting string has more $b$'s than $c$'s. Thus, $uv^iwx^iy \notin L$.
+
+\paragraph{case 4} $vwx = b^p c^q, 1 \leq p+q \leq n$ \\
+When $i=0$, we get a string $a^i b^j c^k$ where $j \leq i \vee k \leq j$. Thus, $uv^iwx^iy \notin L$.
+
+\paragraph{case 5} $vwx = c^p, 1 \leq p \leq n$ \\
+We choose $i=0$ for the last case to generate a string where the number of $c$'s is less than the number of $a$'s and $b$'s. Thus, $uv^iwx^iy \notin L$.
 
 \end{document}
