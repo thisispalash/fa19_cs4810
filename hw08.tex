@@ -2,19 +2,36 @@
 \usepackage{preamble}
 
 \title{Homework Assignment 08 \\
-    \small Due: November 1, 2019}
+    \small Due: November 4, 2019}
 
 \begin{document}
 \maketitle
 
-\section{one symbol CFL}
+\section{CFL, but also regular}
+\paragraph{informally} A language over any one symbol alphabet will contain strings ($z$, $|z| \geq 0$) that contain only one symbol (say, $a$). In this case, it is easy to see that a DFA can be constructed consisting of just two states that accepts all possible strings and only accepts the strings that contain the one symbol (in our case, $a$).
+\begin{figure}[ht]
+\label{fig:dfa}
+\centering
+\begin{tikzpicture}
+% States %
+\node[state, initial, accepting] at (-2,0) (S) {};
+\node[state] at (1,0) (T) {trap};
+% Edges %
+\draw [->]
+    (S) edge[loop above] node{$a$} (S)
+    (S) edge[above] node{$a^{c}$} (T);
+\end{tikzpicture} \\
+where, $a^{c}$ is every symbol that is not $a$
+\caption{DFA accepting all strings containing only the symbol $a$}
+\end{figure}
 
+\paragraph{formally} Let $L$ be a CFL over a single symbol, $a$. Additionally, let $L = L_1 \cup L_2$ where $|L_1| < n \wedge |L_2| \geq n$. $L_1$ is a then a regular set as it is a finite language. Consider a string $z \in L_2$, such that $z = uvwxy$. The pumping lemma states (for CFLs) that $L$ is regular iff $\forall z \in L, z = uvwxy \Rightarrow uv^iwx^iy \in L, \forall i \geq 0$. $L_2$ is given to be a CFL (it is also trivial to see that the lemma holds). As the language is described over a single symbol, the order of $uvwxy$ can be altered and we can Interchange the $v$ and $w$ in $z$. We can then define two more strings $s = uw$ and $t = vx$ which on substitution yields $\forall z \in L_2, z = sty \Rightarrow st^iy \in L_2, \forall i \geq 0$. By the pumping lemma (for regular sets), $L_2$ is a regular set as well. Hence, $L$ is a regular set.
 
 \section{not a CFL}
 \begin{center}
     $L = \{a^i b^j c^k$ $|$ $i \neq j \wedge i<k\}$
 \end{center}
-Let us consider a string of the form $z = a^n b^{n+1} c^{n+1}, n \geq 0$. Let us further break up the string into $uvwxy$ with the constraint(s) $|vwx| \leq n \wedge |vx| > 0$. By the pumping lemma theorem, $L$ is a CFL iff $z \in L \wedge uv^iwx^iy \in L$ for some $i \geq 0$. Then, $vwx$ can be of five different forms -
+Let us consider a string of the form $z = a^n b^{n+1} c^{n+1}, n \geq 0$. Let us further break up the string into $uvwxy$ with the constraint(s) $|vwx| \leq n \wedge |vx| > 0$. By the pumping lemma theorem, $L$ is a CFL iff $z \in L \Rightarrow uv^iwx^iy \in L, \forall i \geq 0$. Then, $vwx$ can be of five different forms -
 \paragraph{case 1} $vwx = a^p, n \geq p \geq 1$ \\
 In this case, we pump up and increase the number of $a$'s to unsatisfy the second condition ($i<k$). Hence, $uv^iwx^iy \notin L$
 \paragraph{case 2} $vwx = a^pb^q, n \geq p+q \geq 1$ \\
@@ -26,13 +43,28 @@ Here we simply pump down to $0$ to make the number of $c$'s less than the number
 \paragraph{case 5} $vwx = c^p, n \geq p \geq 1$ \\
 Similar to case 4, we pump down to $0$ to reduce the number of $c$'s to falsify $i<k$. Hence, $uv^iwx^iy \notin L$
 
-\section{closure under complement}
+\section{CFL and a regular language}
+A CFL, $L$ intersected with a regular language, $R$ is a CFL. We can construct a machine that runs the PDA (for $L$) and the DFA (for $R$) in parallel. The machine only accepts if and only if the PDA and the DFA accept.
+\paragraph{Grammar Construction} 
+\paragraph{case 1} Non empty $L$ without $\epsilon$ \\
+In this case, $L$ has some CFG in Chomsky-Normal form such that every production is of the type $A \rightarrow BC$ or $A \rightarrow \sigma$ where $\sigma \in \Sigma$. We denote the set of states in the DFA that recognizes $R$ as $Q$. We can then construct a grammar $G' = (\Sigma,V',P',S')$ from $Q$ and the CFG for $L$, $G = (\Sigma,V,P,S)$, such that,
+\begin{itemize}
+    \item $V'$ is the set of triples of the form $[pAq]$, where $p,q \in Q \wedge A \in V$
+    \item The productions in $P'$ are a combination of the productions in $P$ and for all $p,q,r \in Q$, 
+    \begin{itemize}
+        \item For each production of the form $A \rightarrow BC \in P$ we have $[pAr] \rightarrow [pBq][qCr] \in P'$
+        \item For each production of the form $A \rightarrow \sigma \in P$ we have $[pAq] \rightarrow \sigma \in P'$
+    \end{itemize}
+    \item The start symbol in $G'$ is simply a triplet of the start symbol in $G$ and the start and accepting states in $Q$; ie, $S' = [sSf]$, where $s,f$ are start and accepting states in Q, respectively.
+\end{itemize}
+\paragraph{case 2} $\epsilon \in L$ \\
+For the case where $\epsilon \in L$, we simply copy the production $S \rightarrow \epsilon$ to the new set of productions, allowing the new start symbol generate $\epsilon$ as well.
 
 \section{be useful or else..}
 We check for two things for a variable of a CFG, $G = (V,T,P,S)$, to be useful: $(i)$ It is \textit{generating}; $(ii)$ It is \textit{reachable}. For a variable to be useful, it must be both of the above. Hence, we check for each condition and if a variable does not satisfy any condition, we eliminate it.
 \paragraph{$X$ is generating} basically implies that the variable $X \in V$ reaches some terminal. More formally, if $X \Rightarrow^* w \in T^*$, then $X$ is generating.
 \paragraph{$X$ is reachable} means that there is some derivation that reaches the variable $X \in V$ from the start symbol. More formally, if $X \Rightarrow^* \alpha X \beta$ for some $\alpha, \beta \in T^*$
-
+\paragraph{algorithm} We nullify all $\epsilon$-productions, substitute unit productions, and finally remove all useless by deleting all non generating and non reachable variables (in that order) and all productions involving such variables.
 
 \section{parse trees}
 \begin{center}
@@ -68,6 +100,29 @@ $S \Rightarrow AB \Rightarrow BAB \Rightarrow CCAB \Rightarrow aCAB \Rightarrow 
                   [.B b ]]] \\ 
     \end{tabular}
     \caption{Parse trees generated by the derivations}
+\end{table}
+\paragraph{derivations} of the string $aabbab$ can be obtained by the use of dynamic programming on increasing lengths of the string. The table can be created as follows:
+\begin{table}[]
+    \centering
+    \begin{tabular}{c | c c c c c c}
+    $|z|$ & $z[0]$ & $z[1]$ & $z[2]$ & $z[3]$ & $z[4]$ & $z[5]$ \\
+    \hline
+    $6$ & $S_{0,5},S_{0,2}$ &
+    \\
+    $5$ & $A_{0,4}$ & $B_{1,2}$ &
+    \\
+    $4$ & $\O$ & $\O$ & $S_{2,5},C_{2,5}$ &
+    \\
+    $3$ & $B_{0,1}$ & $\O$ & $A_{2,3}$ & $S_{3,4},S_{3,5}$ &
+    \\
+    $2$ & $B_{0,1}$ & $S_{1,2},C_{1,2}$ & $\O$ & $S_{3,4},A_{3,4}$ &$S_{4,5},C_{4,5}$ &
+    \\
+    $1$ & $A_{0},C_{0}$ & $A_{1},C_{1}$ & $B_{2}$ & $B_{3}$ & $A_{4},C_{4}$ & $B_{5}$ \\
+    \hline
+    & $a$ & $a$ & $b$ & $b$ & $a$ & $b$ \\
+    \end{tabular}
+    \caption{Use of dynamic programming on increasing lengths of $aabbab$}
+    \label{tab:dynamic}
 \end{table}
 
 \end{document}
