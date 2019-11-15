@@ -2,9 +2,67 @@
 \usepackage{preamble}
 
 \title{Homework Assignment 09 \\
-    \small Due: }
+    \small Due: November 8, 2019}
 
 \begin{document}
 \maketitle
+
+\section{copying [$q_010^n \vdash^* q_f10^n10^n$]}
+The moves begin when the machine sees a $0$. It then turns that $0$ to a $b$ and writes a $0$ at the end of the input (after some manipulations first). It then goes back to the $b$ it inserted, changes it back to $0$, moves right, and repeats the process. The machine halts at the end of the input in state $q_f$.
+\begin{table}[ht]
+    \label{tab:copy}
+    \centering
+    \begin{tabular}{c | c c c c c}
+         & $q_0$ & $q_1$ & $q_2$ & 
+         $q_3$ & $q_c$ \\
+         \hline
+         $0$ & ($q_1,b,R$) & ($q_1,0,R$) & ($q_2,0,R$) & ($q_3,0,L$) & ($q_f,0,R$) \\
+         $1$ & ($q_c,1,L$) & ($q_2,1,R$) & & ($q_3,1,L$) & ($q_0,1,R$) \\
+         $b$ & & ($q_2,1,R$) & ($q_3,0,L$) & ($q_0,0,R$) & ($q_c,b,R$) \\
+    \end{tabular}
+    \caption{$q_010^n \vdash^* 10^nq_f10^n$}
+\end{table}
+
+\section{multiplying [$q_010^n10^m \vdash^* q_f10^n10^m10^{nm}$]}
+The basic idea for this machine is to copy $0^m$ $n$ times. On seeing a $0$, the machine changes it to $b$ and finds $10^m$. On finding it, the machine initiates copying. At the end of copying, the end of the string if of the format $\cdots 10^mq10^m$. The $1$ is changed to a $b$ and the machine moves left to the $b$ changed from $0$. On the $n$th $0$, the machine enters a different state that does not replace the $1$ with a $b$ after copying, before entering $q_f$ and halting.
+\begin{table}[]
+    \centering
+    \begin{tabular}{c | c c c}
+    & $0$ & $1$ & $b$ \\
+    \hline
+    $q_0$ & ($q_1,b,R$) & ($q_c,1,L$) & \\
+    $q_c$ & ($q_f,0,R$) & ($q_0,1,R$) & ($q_c,b,R$) \\
+    $q_1$ & ($q_1,0,R$) & ($q_2,1,L$) & \\
+    $q_2$ & ($q_3,b,R$) & & ($q_{10},b,R$) \\
+    % Copy subroutine %
+    \hline
+    $q_3$ & ($q_4,b,R$) & ($q_7,1,L$) & \\
+    $q_4$ & ($q_4,0,R$) & ($q_5,1,R$) & ($q_5,1,R$) \\
+    $q_5$ & ($q_5,0,R$) & & ($q_6,0,L$) \\
+    $q_6$ & ($q_6,0,L$) & ($q_6,1,L$) & ($q_3,0,R$) \\
+    $q_7$ & ($q_8,0,R$) & ($q_3,1,R$) & ($q_7,b,R$) \\
+    \hline
+    $q_8$ & & ($q_8,b,L$) & ($q_9,0,L$) \\
+    $q_9$ & ($q_9,0,L$) & & ($q_0,0,R$) \\
+    \hline
+    $q_{10}$ & \\
+    $\vdots$ & \\
+    $q_{14}$ & \\
+    \hline
+    $q_{15}$ & ($q_{15},0,L$) & ($q_{15},1,L$) & ($q_{16},0,R$) \\
+    $q_{16}$ &
+    \end{tabular}
+    \caption{Caption}
+    \label{tab:my_label}
+\end{table}
+
+\section{grammar [$ID_i \vdash ID_{i+1}^R$]}
+
+
+\section{modified valid computation}
+
+
+\section{undecidable condition}
+
 
 \end{document}
