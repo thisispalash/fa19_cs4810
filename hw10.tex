@@ -2,9 +2,39 @@
 \usepackage{preamble}
 
 \title{Homework Assignment 10 \\
-    \small Due: }
+    \small Due: November 15, 2019}
 
 \begin{document}
 \maketitle
+
+\section{infinite set}
+Recursive sets are those for which a machine can be constructed that either accepts or rejects all strings to be a part of that set. Recursively enumerable sets are those where the machine either accepts or rejects the strings, or the string causes the machine to run forever. A set that is neither recursive nor $r.e.$, is one where a machine cannot be constructed. Or in another perspective, the machine constructed doesn't accept strings in the set even if they belong to the set.
+\paragraph{example} 
+
+\section{recursively enumerable}
+Yes. We can consider another Turing Machine $M'$ that runs the machines $M_1,M_2,\cdots$ and outputs the string if any of the (sub) machines \textit{recognize} $x_i$, which they do as $x_i \in L(M_i)$. Hence, the set can be enumerated by a slightly modified Turing Machine and is by definition a \textit{re} set.
+\pagebreak
+\section{closure under homomorphisms}
+No and yes.
+
+\subsection{Recursive Sets}
+Let there be a language $L$ consisting of strings $xy$ such that $x= \langle M,w \rangle$, $y=n$, and $M$ halts on $w$ in $n$ moves. Clearly $L$ is is recursive as we can simulate $M$ on string $w$ which will halt in $n$ moves. Now, consider a homomorphism that preserves $x$ but discards $y$ (ie, $h(x)=x$, $h(y)=\epsilon$). This essentially loses the information about $n$ and we do not know when $M$ would halt, essentially turning $h(L)$ to the halting problem, which is undecidable (proved in part 5).
+
+\subsection{Recursively Enumerable Sets}
+Let a Turing Machine $M$ recognize a language $L$, $\forall y \in L$ let $x = h(y)$. Another machine, $M'$, can be constructed that, on input $x$, generates all strings $y$. When a $y$ is found such that $h(y)=x$, $y$ is fed as an input to $M$. If $y$ is accepted by $M$, $x$ is accepted by $M'$.
+
+\section{closure under init operation}
+No. Initial function can be written as a homomorphism of the inverse homomorphism of the language intersected with a regular set to obtain just the initial strings. As recursive sets are not closed under homomorphisms, they are also not closed under $init$.
+\begin{center}
+    $init(L) = h_2(h_1^{-1}(L) \cap \widehat{\Sigma}^* \Sigma^*)$ \\
+    where, $h_1(a) = a \wedge h_1(\widehat{a}) = a$ \\
+    and, $h_2(a) = \epsilon \wedge h_2(\widehat{a}) = a$
+\end{center}
+The (re)definition above preserves all the initial parts of the strings while discarding all the terminating symbol(s).
+
+\section{the halting theorem}
+Assume that there is a machine $H$ that does solve the halting problem. We create another machine $H'$ that is simply a series of two machines, $H$ followed by a simple negation; ie, it does not halt if $H$ says the inputted machine will halt on the given input and vice versa. We feed $H'$ the schema of $H'$ as the first input and the schema of $H'$ as the second input. $H$ (inside $H'$) considers two cases - $H'$ will halt and $H'$ will not halt. \\
+In the first case, the negating machine that takes in the output of $H$ as its input will simply run forever and not halt. Similarly, the negating machine (and thus $H'$) will halt when $H$ predicts that $H'$ would not. \\
+In all the cases, $H$ is incorrect thereby contradicting our initial assumption that $H$ exists. Lastly, if $H$ doesn't exist, then the halting problem is by definition undecidable.
 
 \end{document}
