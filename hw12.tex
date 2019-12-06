@@ -2,9 +2,41 @@
 \usepackage{preamble}
 
 \title{Homework Assignment 12 \\
-    \small Due: }
+    \small Due: December 6, 2019}
 
 \begin{document}
 \maketitle
+
+\section{countably infinite language}
+Let the set of finite strings contains strings of length $1$, ie, just the alphabet. This set is countably infinite if the set of alphabet is countably infinite as we can create countably infinite strings of finite length $1$. The same holds true for strings of finite length $>1$. Hence, the set of all finite length strings with symbols from a countably infinite alphabet \textbf{is} countably infinite.
+
+\section{reducing to a vertex cover problem}
+\paragraph{construction} We can construct an undirected graph from a 3-CNF formula as follows. 
+We represent a clause with three connected nodes representing each of its component literals. Next, we form a pair of nodes for every literal and its negation to force a choice. Lastly, we connect every literal (or its negation) to the respective literal in the triangular clause. This construction requires $2n+3m$ nodes where $n$ is the number of literals and $m$ is the number of clauses. Hence, this conversion can be achieved in polynomial time.
+\paragraph{satisfiability} Every literal is either true or false. We consider the nodes which evaluate to true. This gives us $n$ nodes for $n$ literals. Next, if the original formula is satisfiable, then at least one of the literals in every clause is true. This ensures that the edge leading out of the clause triangle is accounted for (ie, the edge from the true node to the node in the clause triangle). Lastly, each triangle as at most $2$ nodes that maybe included in the set of vertex covers. Hence, if the 3-CNF formula is satisfiable, we can find a vertex cover of at most $n+2m$ vertices for a graph with $2n+3m$ nodes such that all edges are adjacent to some vertex in the vertex cover.
+
+\section{satisfiability of 3-CNF}
+Converse to section 2, the existence of $k$ vertices also implies that the 3-CNF formula is satisfiable. The $k$ vertices in the vertex cover consist of $n$ vertices (that evaluate to true) covering $n$ literals. The remaining $k-n$ vertices cover any left out vertices in the clausal triangles. Lastly, the graph above can be converted to a 3-CNF formula in polynomial time. As the $k$ vertices all evaluate to true and encompass all triangular clauses, the 3-CNF formula must be satisfiable.
+
+
+\section{computability of $h(n)$}
+$h(n)$ is \textbf{not} computable. $h(n)$ is a special case of the halting problem. The halting problem states that given a machine $M$, it is not computable to solve whether or not $M$ stops on some input $w$. We can construct a machine $M'$ such that it takes in the number of states of $M$, $n$ and outputs $h(n)$. This $h(n)$ can be fed to another machine along with $M$ which is essentially the halting problem.
+\paragraph{further discussion}
+Let us assume that there is a machine $M''$ such that it if $M$ halts in under $h(n)$ then it accepts and if it does not, it rejects, thereby always halting. However, if $M$ takes more than $h(n)$ moves to halt, then by definition of $h(n)$, $M$ does not halt. This provides a solution to the halting problem which is absurd and hence, our assumption must be absurd.
+
+\section{recursive and recursively enumerable sets}
+\begin{itemize}
+    \item A recursive set can be described by a Turing Machine that always halts on every input, either accepting it or rejecting it
+    \item A r.e. set can be described by a Turing Machine that either accepts/rejects an input or runs forever
+    \item Every recursive set is a r.e. set, but a r.e. set may not be a recursive set
+    \item Recursive sets are closed under union, intersection, complement, and kleene star operations because we can construct machines that either accept or reject the string to be a member of the modified set 
+    \item r.e. sets are closed under union, intersection, and kleene star operations by a similar argument as in 4
+    \item r.e. sets are not closed under complement (ie, the complement of a r.e. set is not a r.e. set)
+    \item Recursive sets are not closed under homomorphisms but are closed under inverse homomorphisms
+    \item r.e. sets are closed under both the above operations
+    \item Recursive sets are not closed under the $init$ operation, but r.e. sets are because $init$ can be reduced to homomorphisms and inverse homomorphisms
+\end{itemize}
+
+
 
 \end{document}
